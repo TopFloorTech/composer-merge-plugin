@@ -320,8 +320,17 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
             $this->logger->log("\n".'<info>Running composer update to apply merge settings</info>');
 
             $file = Factory::getComposerFile();
-            $lock = Factory::getLockFile($file);
-            $lockBackup = file_exists($lock) ? file_get_contents($lock) : null;
+            $lock = null;
+            $lockBackup = null;
+
+
+            // on Composer version 1.8.0 method getLockFile does not exist
+            $rm = new \ReflectionMethod( new Factory, 'getLockFile');
+            $getLockFileMethosExists = $rm->isStatic();
+            if ($getLockFileMethosExists) {
+                $lock = Factory::getLockFile($file);
+                $lockBackup = file_exists($lock) ? file_get_contents($lock) : null;
+            }
 
             $config = $this->composer->getConfig();
             $preferSource = $config->get('preferred-install') == 'source';
