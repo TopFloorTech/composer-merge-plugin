@@ -325,9 +325,7 @@ class MergePlugin implements PluginInterface, EventSubscriberInterface
 
 
             // on Composer version 1.8.0 method getLockFile does not exist
-            $rm = new \ReflectionMethod( new Factory, 'getLockFile');
-            $getLockFileMethosExists = $rm->isStatic();
-            if ($getLockFileMethosExists) {
+            if (method_exists(new Factory(), 'getLockFile')) {
                 $lock = Factory::getLockFile($file);
                 $lockBackup = file_exists($lock) ? file_get_contents($lock) : null;
             }
